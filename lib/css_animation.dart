@@ -195,6 +195,7 @@ class CssAnimation
         ..animationTimingFunction = timing
         ..animationIterationCount = iterations > 0 ? iterations.toString() : 'infinite'
         ..animationDirection      = alternate ? 'alternate' : 'normal'
+        ..animationFillMode       = 'forwards'
         ..animationDelay          = '${delay}ms';
 
     if (iterations > 0)
