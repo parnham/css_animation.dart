@@ -1,0 +1,29 @@
+body
+{
+  color: #000;
+  margin: 0;
+  padding: 16px;
+  background-color: #ccc;
+}
+
+div
+{
+  width: 128px;
+  height: 128px;
+  position: absolute;
+  top: 128px;
+  border: 1px solid #000;
+  padding: 4px;
+  text-align: center;
+}
+
+div#a
+{
+  background-color: #faa;
+}
+
+div#b
+{
+  background-color: #aaf;
+  left: 256px;
+}

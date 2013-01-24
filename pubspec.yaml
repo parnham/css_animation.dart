@@ -1,0 +1,8 @@
+name: css_animation
+version: 0.1.0
+description: Simplified access to the CSS3 animation features
+author: Dan Parnham
+homepage: http://github.com/parnham/css_animation.dart
+
+dependencies:
+  browser: any
