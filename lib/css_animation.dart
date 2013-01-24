@@ -46,14 +46,10 @@ class CssAnimation
   static const String EASE_OUT        = 'ease-out';
   static const String EASE_IN_OUT     = 'ease-in-out';
 
-  /// Fill mode constants
-  static const String FILL_NONE       = 'none';
-  static const String FILL_FORWARDS   = 'forwards';
-  static const String FILL_BACKWARDS  = 'backwards';
-  static const String FILL_BOTH       = 'both';
-
   static int _reference         = 0;
   static StyleElement _style    = new StyleElement();
+  Map<String, Object> _start    = null;
+  Map<String, Object> _end      = null;
   int _id                       = _reference++;
   //CssKeyframesRule _rule;
   String _name;
@@ -148,6 +144,8 @@ class CssAnimation
     rule.add('}');
 
     _style.appendText(rule.toString());
+    this._start = keyframes[0];
+    this._end   = keyframes[100];
 
     /*this._rule = (_style.sheet as CssStyleSheet).cssRules
         .where((r) => r is CssKeyframesRule)
@@ -168,10 +166,11 @@ class CssAnimation
   /// The [alternate] flag will determine whether the animation starts back
   /// at the beginning for each iteration, or if enabled will cause the animation
   /// to bounce back and forth between the start and end keyframes.
+  /// Setting the [persist] flag will ensure that when the animation has completed
+  /// the styles defined at that point will be applied to the element (since
+  /// otherwise these would be lost when the animation property is reset).
   /// The animation [timing] function can be specified from a set of possibilities
-  /// defined as constants above. The [fill] parameter determines the persistence
-  /// of CSS styles before and after the animation and should be one of the FILL_*
-  /// constants defined above. For more information please refer to the relevant
+  /// defined as constants above. For more information please refer to the relevant
   /// CSS documentation.
   ///
   /// A callback function, [onComplete], if supplied will be invoked when the
@@ -186,8 +185,8 @@ class CssAnimation
                                   int delay:      0,
                                   int iterations: 1,
                                   bool alternate: false,
+                                  bool persist:   true,
                                   String timing:  EASE,
-                                  String fill:    FILL_FORWARDS,
                                   CssAnimationComplete onComplete })
   {
     element.style
@@ -196,8 +195,7 @@ class CssAnimation
         ..animationTimingFunction = timing
         ..animationIterationCount = iterations > 0 ? iterations.toString() : 'infinite'
         ..animationDirection      = alternate ? 'alternate' : 'normal'
-        ..animationDelay          = '${delay}ms'
-        ..animationFillMode       = fill;
+        ..animationDelay          = '${delay}ms';
 
     if (iterations > 0)
     {
@@ -206,6 +204,13 @@ class CssAnimation
       listener = (AnimationEvent e) {
         if (e.animationName == this._name && e.target == element)
         {
+          if (persist)
+          {
+            var map = (alternate && (iterations % 2) == 0) ? this._start : this._end;
+
+            map.forEach((k, v) => element.style.setProperty(k, v.toString()));
+          }
+
           element.style.animation = 'none';
           window.on.animationEnd.remove(listener);
 
