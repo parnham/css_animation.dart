@@ -18,10 +18,9 @@ Once a rule has been built it can be applied to any number of elements
 using the same instance of CssAnimation since it is simply using the
 name of that rule.
 
-CssAnimation instances cannot be modified (yet) so re-use is not an option
-at this stage, but be wary of creating large numbers of new instances since
-it adds a new rule to the stylesheet which is not removed. This may have
-an unfortunate effect on performance. 
+A CssAnimation instance can now be modified, but if new instances are being 
+created continuously then call destroy() once an instance has been used
+to ensure that the rule is removed from the stylesheets.
 
 Please note that it does not attempt to fallback to javascript/dart driven 
 animations if the CSS3 capabilities are not there, it simply won't work in 
@@ -72,7 +71,7 @@ main()
     { 'opacity': 1, 'top': '8px' }
   );
 	
-  animation.apply(element, iterations: 2, alternate: true,);
+  animation.apply(element, iterations: 2, alternate: true);
 }
 ```
 
@@ -83,7 +82,7 @@ iterations = 2).
 
 ### Keyframes
 
-An animation in CSS3 is defined as set of keyframes (between 0% and 100%) with a 
+An animation in CSS3 is defined as a set of keyframes (between 0% and 100%) with a 
 specific property state at each point. The most flexible constructor allows 
 any number of keyframes to be specified (within reason).
 
@@ -109,13 +108,25 @@ This time the example provided a callback function which is invoked
 when the animation has completed.
 
 
-Future
-------
+### Modifications
 
-The next step may be to allow some form of rule modification that results
-in it rebuilding and overwriting the underlying stylesheet rule.
+CssAnimation supports rules modification. A property for a specific
+keyframe can be changed.
 
-Since dart classes have no destructor an instance is unable to remove its rule
-from the stylesheet when it is no longer required, but we could provide a
-function that would allow a developer to indicate when they no longer plan to
-use that instance and the rule can therefore be deleted.
+```dart
+animation.modify(100, 'top', '16px');
+```
+
+The modification will take effect next time the animation is applied to an element.
+If a constructor was used that only specified "from" and "to" then there will be
+keyframes at 0 and 100 respectively.
+
+Alternatively, the CSS property map for a specific keyframe can be entirely
+replaced.
+
+```dart
+animation.replace(50, { 'opacity': 0.25, 'background-color': '#888' });
+```
+
+Please be aware that each modification results in a rebuild of the underlying
+rule, therefore excessive use may affect the performance of your application.

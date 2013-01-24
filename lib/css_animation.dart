@@ -46,12 +46,11 @@ class CssAnimation
   static const String EASE_OUT        = 'ease-out';
   static const String EASE_IN_OUT     = 'ease-in-out';
 
-  static int _reference         = 0;
-  static StyleElement _style    = new StyleElement();
-  Map<String, Object> _start    = null;
-  Map<String, Object> _end      = null;
-  int _id                       = _reference++;
-  //CssKeyframesRule _rule;
+  static int _reference                     = 0;
+  static StyleElement _style                = new StyleElement();
+  Text _rule                                = new Text('');
+  Map<int, Map<String, Object>> _keyframes  = null;
+  int _id                                   = _reference++;
   String _name;
 
 
@@ -130,26 +129,91 @@ class CssAnimation
   /// Builds the rule that is injected into the stylesheets
   void _buildRule(Map<int, Map<String, Object>> keyframes)
   {
-    if (_style.parent == null) document.head.children.add(_style);
+    if (this._name == null)
+    {
+      this._name = 'css-animation-${_id}';
+      _style.nodes.add(this._rule);
 
-    this._name        = 'css-animation-${_id}';
+      if (_style.parent == null) document.head.children.add(_style);
+    }
+
+    this._keyframes   = keyframes;
     StringBuffer rule = new StringBuffer('@${_prefix}keyframes $_name {');
 
     keyframes.forEach((percent, properties) {
-      rule.add('$percent% {');
+      rule.add(' $percent%{');
       properties.forEach((name, value) => rule.add('$name:${value.toString()};'));
       rule.add('}');
     });
 
     rule.add('}');
 
-    _style.appendText(rule.toString());
-    this._start = keyframes[0];
-    this._end   = keyframes[100];
+    this._rule.text = rule.toString();
+  }
 
-    /*this._rule = (_style.sheet as CssStyleSheet).cssRules
-        .where((r) => r is CssKeyframesRule)
-        .firstMatching((CssKeyframesRule r) => r.name == this._name);*/
+
+  /// Modifies a single property for a specific keyframe.
+  ///
+  /// For a particular [keyframe] the given [property] will
+  /// be updated to [value]. If the property does not exist
+  /// then it will be created.
+  /// The keyframe must exist. If this instance was created
+  /// using either of the simpler constructors then the "from"
+  /// and "to" keyframes will be 0 and 100 respectively.
+  /// This will not affect any elements that are currently
+  /// animating with this rule until they have finished.
+  ///
+  /// Returns false if the keyframe is invalid.
+  ///
+  bool modify(int keyframe, String property, Object value)
+  {
+    if (this._keyframes.containsKey(keyframe))
+    {
+      this._keyframes[keyframe][property] = value;
+      this._buildRule(this._keyframes);
+
+      return true;
+    }
+
+    return false;
+  }
+
+
+  /// Replaces a set of properties for a specific keyframe.
+  ///
+  /// For a particular [keyframe] the property map will be
+  /// replaced with [properties].
+  /// The keyframe must exist. If this instance was created
+  /// using either of the simpler constructors then the "from"
+  /// and "to" keyframes will be 0 and 100 respectively.
+  /// This will not affect any elements that are currently
+  /// animating with this rule until they have finished.
+  ///
+  /// Returns false if the keyframe is invalid.
+  ///
+  bool replace(int keyframe, Map<String, Object> properties)
+  {
+    if (this._keyframes.containsKey(keyframe))
+    {
+      this._keyframes[keyframe] = properties;
+      this._buildRule(this._keyframes);
+
+      return true;
+    }
+
+    return false;
+  }
+
+
+  /// Removes the rule from the stylesheets.
+  ///
+  /// To tidy up this removes the rule from the stylesheets, thereby rendering
+  /// any future calls to apply() ineffective. Any elements that are currently
+  /// animating with this rule will continue to do so.
+  ///
+  void destroy()
+  {
+    this._rule.remove();
   }
 
 
@@ -207,7 +271,7 @@ class CssAnimation
         {
           if (persist)
           {
-            var map = (alternate && (iterations % 2) == 0) ? this._start : this._end;
+            var map = (alternate && (iterations % 2) == 0) ? this._keyframes[0] : this._keyframes[100];
 
             map.forEach((k, v) => element.style.setProperty(k, v.toString()));
           }
