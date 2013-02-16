@@ -265,6 +265,7 @@ class CssAnimation
     if (iterations > 0)
     {
       EventListener listener;
+      var subscription;
 
       listener = (AnimationEvent e) {
         if (e.animationName == this._name && e.target == element)
@@ -277,13 +278,13 @@ class CssAnimation
           }
 
           element.style.animation = 'none';
-          window.on.animationEnd.remove(listener);
+          subscription.cancel();
 
           if (onComplete != null) onComplete();
         }
       };
 
-      window.on.animationEnd.add(listener);
+      subscription = window.onAnimationEnd.listen(listener);
     }
   }
 }

@@ -28,13 +28,13 @@ void main()
   );
 
   // You can pause or resume the animation by adjusting the play state:
-  boxB.on.click.add((e) =>
+  boxB.onClick.listen((e) =>
       boxB.style.animationPlayState = boxB.style.animationPlayState == 'paused' ? 'running' : 'paused'
   );
 
   // Animation for boxA is triggered by a click and on completion
   // will append a count value inside the box.
-  boxA.on.click.add((e) =>
+  boxA.onClick.listen((e) =>
       animA.apply(boxA,
           iterations: 2,
           alternate: true,
@@ -46,14 +46,14 @@ void main()
   // Individual properties at specific keyframes can be modified.
   // Will take effect next time the animation is applied to an element.
   int top = 320;
-  query('#buttonA').on.click.add((e) {
+  query('#buttonA').onClick.listen((e) {
     animA.modify(100, 'top', '${top}px');
     line.style.top = '${top + 138}px';
     top += 64;
   });
 
   // Entire property maps at specific keyframes can be replaced.
-  query('#buttonB').on.click.add((e) {
+  query('#buttonB').onClick.listen((e) {
     boxB.style.animation = 'none';
     animB.replace(50, { 'opacity': 0.25, 'background-color': '#fff', 'font-size': '48px' });
     animB.apply(boxB, iterations: 0, alternate: true, duration: 2000, timing: CssAnimation.LINEAR);

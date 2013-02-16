@@ -110,7 +110,7 @@ when the animation has completed.
 
 ### Modifications
 
-CssAnimation supports rules modification. A property for a specific
+CssAnimation supports rule modification. A property for a specific
 keyframe can be changed.
 
 ```dart
