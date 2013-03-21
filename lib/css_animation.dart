@@ -1,5 +1,5 @@
 // Copyright (c) 2013, Dan Parnham. All rights reserved. Use of this source code
-// is governed by a BSD-style licence that can be found in the LICENCE file.
+// is governed by a BSD-style licence that can be found in the LICENSE file.
 
 library css_animation;
 
@@ -141,12 +141,12 @@ class CssAnimation
     StringBuffer rule = new StringBuffer('@${_prefix}keyframes $_name {');
 
     keyframes.forEach((percent, properties) {
-      rule.add(' $percent%{');
-      properties.forEach((name, value) => rule.add('$name:${value.toString()};'));
-      rule.add('}');
+      rule.write(' $percent%{');
+      properties.forEach((name, value) => rule.write('$name:${value.toString()};'));
+      rule.write('}');
     });
 
-    rule.add('}');
+    rule.write('}');
 
     this._rule.text = rule.toString();
   }
