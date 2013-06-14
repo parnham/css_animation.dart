@@ -4,23 +4,7 @@
 library css_animation;
 
 import 'dart:html';
-
-
-String _browserPrefix;
-String get _prefix
-{
-  if (_browserPrefix == null)
-  {
-    var agent = window.navigator.userAgent;
-
-    if (agent.contains("Firefox", 0))     _browserPrefix = '-moz-';
-    else if (agent.contains("Opera", 0))  _browserPrefix = '-o-';
-    else if (agent.contains("MSIE", 0))   _browserPrefix = '-ms-';
-    else                                  _browserPrefix = '-webkit-';
-  }
-
-  return _browserPrefix;
-}
+import 'dart:html_common';
 
 
 /// Callback function type
@@ -138,7 +122,7 @@ class CssAnimation
     }
 
     this._keyframes   = keyframes;
-    StringBuffer rule = new StringBuffer('@${_prefix}keyframes $_name {');
+    StringBuffer rule = new StringBuffer('@${Device.cssPrefix}keyframes $_name {');
 
     keyframes.forEach((percent, properties) {
       rule.write(' $percent%{');
