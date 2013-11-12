@@ -1,7 +1,11 @@
 name: css_animation
-version: 0.1.5
+version: 0.1.6
 author: Dan Parnham <dan@teadriven.me.uk>
 description: Simplified access to the CSS3 animation features
 homepage: http://github.com/parnham/css_animation.dart
-dependencies:
+
+environment:
+  sdk: ">=0.8.10+6 <2.0.0"
+
+dev_dependencies:
   browser: any
