@@ -13,9 +13,9 @@ void main()
   keyframes[100]  = { 'opacity': 1, 'left': '630px', 'top': '256px', 'width': '256px', 'height': '256px' };
 
   var count = 0;
-  var boxA  = query('#a');
-  var boxB  = query('#b');
-  var line  = query('#line');
+  var boxA  = querySelector('#a');
+  var boxB  = querySelector('#b');
+  var line  = querySelector('#line');
   var animA = new CssAnimation('top', '196px', '256px');  // Simple animation of a single property
   var animB = new CssAnimation.keyframes(keyframes);      // Fully keyframed animation
 
@@ -46,14 +46,14 @@ void main()
   // Individual properties at specific keyframes can be modified.
   // Will take effect next time the animation is applied to an element.
   int top = 320;
-  query('#buttonA').onClick.listen((e) {
+	querySelector('#buttonA').onClick.listen((e) {
     animA.modify(100, 'top', '${top}px');
     line.style.top = '${top + 138}px';
     top += 64;
   });
 
   // Entire property maps at specific keyframes can be replaced.
-  query('#buttonB').onClick.listen((e) {
+	querySelector('#buttonB').onClick.listen((e) {
     boxB.style.animation = 'none';
     animB.replace(50, { 'opacity': 0.25, 'background-color': '#fff', 'font-size': '48px' });
     animB.apply(boxB, iterations: 0, alternate: true, duration: 2000, timing: CssAnimation.LINEAR);
