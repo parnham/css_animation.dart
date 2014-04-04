@@ -252,23 +252,21 @@ class CssAnimation
       var subscription;
 
       listener = (AnimationEvent e) {
-        if (e.animationName == this._name && e.target == element)
+
+        if (persist)
         {
-          if (persist)
-          {
-            var map = (alternate && (iterations % 2) == 0) ? this._keyframes[0] : this._keyframes[100];
+          var map = (alternate && (iterations % 2) == 0) ? this._keyframes[0] : this._keyframes[100];
 
-            map.forEach((k, v) => element.style.setProperty(k, v.toString()));
-          }
-
-          element.style.animation = 'none';
-          subscription.cancel();
-
-          if (onComplete != null) onComplete();
+          map.forEach((k, v) => element.style.setProperty(k, v.toString()));
         }
+
+        element.style.animation = 'none';
+        subscription.cancel();
+
+        if (onComplete != null) onComplete();
       };
 
-      subscription = window.onAnimationEnd.listen(listener);
+      subscription = element.on["animationend"].listen(listener);
     }
   }
 }
