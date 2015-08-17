@@ -68,7 +68,7 @@ class CssAnimation
   ///         { 'visibility' : 'visible', 'opacity' : 1 }
   ///     );
   ///
-  CssAnimation.properties(Map<String, Object> from, Map<String, Object> to)
+  CssAnimation.properties(Map<String, Object> from, Map<String, Object> to, { ShadowRoot shadow: null })
   {
     var keyframes   = new Map<int, Map<String, Object>>();
     keyframes[0]    = from;
@@ -96,7 +96,7 @@ class CssAnimation
   /// The above example will create an animation that fades an element in,
   /// moves it down 32px and then fades it back out again.
   ///
-  CssAnimation.keyframes(Map<int, Map<String, Object>> keyframes)
+  CssAnimation.keyframes(Map<int, Map<String, Object>> keyframes, { ShadowRoot shadow: null })
   {
     if (keyframes.containsKey(0) && keyframes.containsKey(100))
     {
@@ -117,8 +117,6 @@ class CssAnimation
     {
       this._name = 'css-animation-${_id}';
       _style.nodes.add(this._rule);
-
-      if (_style.parent == null) document.head.children.add(_style);
     }
 
     this._keyframes   = keyframes;
@@ -225,18 +223,30 @@ class CssAnimation
   /// animation for this element has completed. However, this parameter will
   /// be ignored if an infinite number of iterations has been specified.
   ///
+  /// If using this instance from a web component (such as a polymer element)
+  /// please set the [shadow] argument to the shadow root of the component
+  /// so that the animation style can be inserted at the correct place.
+  /// CssAnimation instances can not be shared across components.
+  ///
   /// Note: If you have set a callback and you apply any animation to
   /// this element again before this one has completed then the callback
   /// may not fire and the internal listener may not be removed.
   ///
-  void apply(Element element, { int duration:   1000,
-                                  int delay:      0,
-                                  int iterations: 1,
-                                  bool alternate: false,
-                                  bool persist:   true,
-                                  String timing:  EASE,
+  void apply(Element element, { int duration:         1000,
+                                  int delay:          0,
+                                  int iterations:     1,
+                                  bool alternate:     false,
+                                  bool persist:       true,
+                                  String timing:      EASE,
+                                  ShadowRoot shadow:  null,
                                   CssAnimationComplete onComplete })
   {
+    if (_style.parent == null)
+    {
+      if (shadow != null) shadow.children.add(_style);
+      else                document.head.children.add(_style);
+    }
+
     element.style
         ..animationName           = this._name
         ..animationDuration       = '${duration}ms'

@@ -15,9 +15,11 @@ void main()
   var count = 0;
   var boxA  = querySelector('#a');
   var boxB  = querySelector('#b');
+  var boxC	= querySelector('#c');
   var line  = querySelector('#line');
   var animA = new CssAnimation('top', '196px', '256px');  // Simple animation of a single property
   var animB = new CssAnimation.keyframes(keyframes);      // Fully keyframed animation
+  var animC = new CssAnimation('opacity','0.5', '1.0');
 
   // Animation for boxB will run indefinitely
   animB.apply(boxB,
@@ -34,14 +36,20 @@ void main()
 
   // Animation for boxA is triggered by a click and on completion
   // will append a count value inside the box.
-  boxA.onClick.listen((e) =>
+  boxA.onClick.listen((e) {
       animA.apply(boxA,
           iterations: 2,
           alternate: true,
           duration: 500,
           onComplete: () => boxA.appendHtml(' ${count++}')
-      )
-  );
+      );
+
+      animC.apply(boxC,
+			iterations: 1,
+			duration: 200,
+			onComplete: () => boxC.appendHtml(' ${count}')
+	);
+  });
 
   // Individual properties at specific keyframes can be modified.
   // Will take effect next time the animation is applied to an element.

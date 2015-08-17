@@ -28,6 +28,11 @@ div#b
   left: 256px;
 }
 
+div#c
+{
+	top: 512px;
+}
+
 div#line
 {
   border: 0;

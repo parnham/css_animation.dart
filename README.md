@@ -1,14 +1,14 @@
 CssAnimation
 ============
 
-Provides a simple wrapper around the CSS3 animation functionalities. 
+Provides a simple wrapper around the CSS3 animation functionalities.
 
 
 Introduction
 ------------
 
 At the time of writing there did not appear to be a simple way to dynamically
-generate the CSS3 keyframes necessary for animation within dart. Therefore 
+generate the CSS3 keyframes necessary for animation within dart. Therefore
 the appropriate rules must be built manually and injected into a stylesheet.
 
 CssAnimation provides a simple interface with varying degrees of control
@@ -18,12 +18,12 @@ Once a rule has been built it can be applied to any number of elements
 using the same instance of CssAnimation since it is simply using the
 name of that rule.
 
-A CssAnimation instance can now be modified, but if new instances are being 
+A CssAnimation instance can now be modified, but if new instances are being
 created continuously then call destroy() once an instance has been used
 to ensure that the rule is removed from the stylesheets.
 
-Please note that it does not attempt to fallback to javascript/dart driven 
-animations if the CSS3 capabilities are not there, it simply won't work in 
+Please note that it does not attempt to fallback to javascript/dart driven
+animations if the CSS3 capabilities are not there, it simply won't work in
 older browsers.
 
 
@@ -32,14 +32,14 @@ Examples
 
 ### Single property
 
-The simplest constructor for CssAnimation allows the keyframing of a single 
+The simplest constructor for CssAnimation allows the keyframing of a single
 property.
 
 ```dart
 import 'dart:html';
 import 'package:css_animation/css_animation.dart';
 
-main() 
+main()
 {
   var element   = query('#element-of-interest');
   var animation = new CssAnimation('opacity', 0, 1);
@@ -63,43 +63,43 @@ form via toString().
 import 'dart:html';
 import 'package:css_animation/css_animation.dart';
 
-main() 
+main()
 {
   var element   = query('#element-of-interest');
   var animation = new CssAnimation.properties(
     { 'opacity': 0, 'top': '0px' }
     { 'opacity': 1, 'top': '8px' }
   );
-	
+
   animation.apply(element, iterations: 2, alternate: true);
 }
 ```
 
-The example above will fade the element in at the same time as moving it down a bit, 
-then it will do the reverse (because alternate = true) before stopping (because 
+The example above will fade the element in at the same time as moving it down a bit,
+then it will do the reverse (because alternate = true) before stopping (because
 iterations = 2).
 
 
 ### Keyframes
 
-An animation in CSS3 is defined as a set of keyframes (between 0% and 100%) with a 
-specific property state at each point. The most flexible constructor allows 
+An animation in CSS3 is defined as a set of keyframes (between 0% and 100%) with a
+specific property state at each point. The most flexible constructor allows
 any number of keyframes to be specified (within reason).
 
 ```dart
 import 'dart:html';
 import 'package:css_animation/css_animation.dart';
 
-main() 
+main()
 {
   var keyframes   = new Map<int, Map<String, Object>>();
   keyframes[0]    = { 'opacity': 0 };
   keyframes[50]   = { 'opacity': 1, 'background-color': '#fff' };
   keyframes[100]  = { 'opacity': 1, 'background-color': '#000' };
-  
+
   var element   = query('#element-of-interest');
   var animation = new CssAnimation.keyframes(keyframes);
-	
+
   animation.apply(element, onComplete: () => element.appendHtml('finished'));
 }
 ```
@@ -130,3 +130,11 @@ animation.replace(50, { 'opacity': 0.25, 'background-color': '#888' });
 
 Please be aware that each modification results in a rebuild of the underlying
 rule, therefore excessive use may affect the performance of your application.
+
+
+### Shadow root
+
+If using CssAnimation from a component with a shadow root (such as a polymer
+element) then the animation styles must be placed in that root instead of
+the document head. Simple pass the "shadowRoot" to the argument named
+"shadow" when invoking the apply function.

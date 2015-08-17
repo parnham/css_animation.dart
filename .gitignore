@@ -3,6 +3,7 @@ pubspec.lock
 *.js
 *.js.deps
 *.map
+*.sublime-workspace
 
 packages
 .settings
